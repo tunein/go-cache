@@ -2,17 +2,15 @@ package cache
 
 import (
 	"time"
-
-	"golang.org/x/exp/constraints"
 )
 
 type (
 	// AddedFunc function that should be called when new item is added to the cache
-	AddedFunc[TKey constraints.Ordered, TValue any] func(TKey, TValue)
+	AddedFunc[TKey comparable, TValue any] func(TKey, TValue)
 	// LoaderFunc function that is used to load missing or expired cache entry
-	LoaderFunc[TKey constraints.Ordered, TValue any] func(TKey) (TValue, error)
+	LoaderFunc[TKey comparable, TValue any] func(TKey) (TValue, error)
 	// LoaderExpireFunc is called when item is expired
-	LoaderExpireFunc[TKey constraints.Ordered, TValue any] func(TKey) (TValue, *time.Duration, error)
+	LoaderExpireFunc[TKey comparable, TValue any] func(TKey) (TValue, *time.Duration, error)
 )
 
 // Set a loader function.

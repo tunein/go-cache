@@ -7,8 +7,6 @@ package cache
 
 import (
 	"sync"
-
-	"golang.org/x/exp/constraints"
 )
 
 // call is an in-flight or completed Do call
@@ -20,8 +18,8 @@ type call[TValue any] struct {
 
 // Group represents a class of work and forms a namespace in which
 // units of work can be executed with duplicate suppression.
-type Group[TKey constraints.Ordered, TValue any] struct {
-	c   ICache[TKey, TValue]
+type Group[TKey comparable, TValue any] struct {
+	c   Cacher[TKey, TValue]
 	mtx sync.Mutex             // protects m
 	m   map[TKey]*call[TValue] // lazily initialized
 }
@@ -30,10 +28,10 @@ type Group[TKey constraints.Ordered, TValue any] struct {
 // sure that only one execution is in-flight for a given key at a
 // time. If a duplicate comes in, the duplicate caller waits for the
 // original to complete and receives the same results.
-func (g *Group[TKey, TValue]) Do(key TKey, fn func() (TValue, error), isWait bool) (TValue, bool, error) {
+func (g *Group[TKey, TValue]) Do(key TKey, fn func() (TValue, error), isWait bool) (res TValue, dupl bool, err error) {
 	var def TValue
 	g.mtx.Lock()
-	v, err := g.c.get(key, true)
+	v, err := g.c.get(key)
 	if err == nil {
 		g.mtx.Unlock()
 		return v, false, nil
@@ -54,7 +52,7 @@ func (g *Group[TKey, TValue]) Do(key TKey, fn func() (TValue, error), isWait boo
 	g.m[key] = c
 	g.mtx.Unlock()
 	if !isWait {
-		go g.call(c, key, fn)
+		go func() { _, _ = g.call(c, key, fn) }()
 		return def, false, ErrNotFound
 	}
 	v, err = g.call(c, key, fn)
