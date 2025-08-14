@@ -3,6 +3,8 @@ run:
   go: '1.24'
 linters:
   settings:
+    revive:
+      severity: warning
     gosec:
       excludes:
         - G115
