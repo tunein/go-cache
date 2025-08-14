@@ -159,7 +159,8 @@ func (c *Cache[TKey, TValue]) initItems() {
 
 // load a new value using by specified key.
 func (c *Cache[TKey, TValue]) load(key TKey, cb func(TValue,
-	*time.Duration, error) (TValue, error), isWait bool) (val TValue, isLoaded bool, err error) {
+	*time.Duration, error) (TValue, error), isWait bool,
+) (val TValue, isLoaded bool, err error) {
 	v, called, err := c.loadGroup.Do(key, func() (v TValue, e error) {
 		return cb(c.loaderExpireFunc(key))
 	}, isWait)
