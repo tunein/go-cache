@@ -1,78 +1,86 @@
+version: "2"
 run:
-  go: '1.20'
-
-linters-settings:
-  dupl:
-    threshold: 100
-  funlen:
-    lines: 500
-    statements: 500
-  gci:
-    local-prefixes: github.com/golangci/golangci-lint
-  goconst:
-    min-len: 2
-    min-occurrences: 2
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-  gocyclo:
-    min-complexity: 15
-  gomnd:
-    settings:
-      mnd:
-        # don't include the "operation" and "assign"
-        checks: argument,case,condition,return
-  lll:
-    line-length: 140
-  maligned:
-    suggest-new: true
-  misspell:
-    locale: US
-  nolintlint:
-    allow-leading-space: true # don't require machine-readable nolint directives (i.e. with no leading space)
-    allow-unused: false # report any unused nolint directives
-    require-explanation: false # don't require an explanation for nolint directives
-    require-specific: true # don't require nolint directives to be specific about which linter is being skipped
-
+  go: '1.24'
 linters:
-  disable-all: true
+  settings:
+    revive:
+      severity: warning
+    gosec:
+      excludes:
+        - G115
+    dupl:
+      threshold: 100
+    staticcheck:
+      checks: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
+    funlen:
+      lines: 100
+      statements: 50
+    goconst:
+      min-len: 4
+      min-occurrences: 3
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+      disabled-checks:
+        - whyNoLint
+    gocyclo:
+      min-complexity: 20
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - return
+    lll:
+      line-length: 175
+    misspell:
+      locale: US
+    nolintlint:
+      allow-unused: false # report any unused nolint directives
+      require-explanation: false # don't require an explanation for nolint directives
+      require-specific: true # don't require nolint directives to be specific about which linter is being skipped
+  default: "none"
   enable:
     - dogsled
     - dupl
     - errcheck
     - exhaustive
-    - exportloopref
+    - copyloopvar
+    - gocyclo
     - funlen
     - goconst
     - gocritic
-    - gocyclo
-    - gofmt
-    - goimports
     - goprintffuncname
     - gosec
     - govet
     - ineffassign
     - lll
+    - gosmopolitan
     - misspell
     - nakedret
     - revive
-    - typecheck
     - unconvert
+    - unused
     - whitespace
     - bodyclose
-    - gosimple
     - noctx
-    - stylecheck
     - unparam
-    - unused
-
-issues:
-  # Excluding configuration per-path, per-linter, per-text and per-source
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gomnd
+    - iface
+    - sqlclosecheck
+    - wastedassign
+    - errchkjson
+    - staticcheck
+formatters:
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/tunein/go-cache
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports

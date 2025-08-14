@@ -17,33 +17,31 @@ func TestCacheItemSuite(t *testing.T) {
 
 // TestExpired ensures correct expired value returning
 func (s *CacheItemSuite) TestExpired() {
-	var (
-		testCases = []struct {
-			title   string
-			expired bool
-			added   time.Time
-			ttl     time.Duration
-		}{
-			{
-				title:   "True",
-				added:   time.Now().Add(-10 * time.Second),
-				expired: true,
-				ttl:     5 * time.Second,
-			},
-			{
-				title:   "False",
-				added:   time.Now(),
-				expired: false,
-				ttl:     5 * time.Second,
-			},
-			{
-				title:   "No TTL",
-				added:   time.Now(),
-				expired: false,
-				ttl:     0,
-			},
-		}
-	)
+	testCases := []struct {
+		title   string
+		expired bool
+		added   time.Time
+		ttl     time.Duration
+	}{
+		{
+			title:   "True",
+			added:   time.Now().Add(-10 * time.Second),
+			expired: true,
+			ttl:     5 * time.Second,
+		},
+		{
+			title:   "False",
+			added:   time.Now(),
+			expired: false,
+			ttl:     5 * time.Second,
+		},
+		{
+			title:   "No TTL",
+			added:   time.Now(),
+			expired: false,
+			ttl:     0,
+		},
+	}
 
 	for _, tc := range testCases {
 		s.Run(tc.title, func() {

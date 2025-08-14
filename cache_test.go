@@ -17,21 +17,19 @@ func TestCacheSuite(t *testing.T) {
 
 // TestGet ensures setting and retrieval of the requested value to the cache
 func (s *CacheSuite) TestGet() {
-	var (
-		testCases = []struct {
-			title string
-			val   float32
-			key   string
-			exp   time.Duration
-		}{
-			{
-				title: "Success",
-				key:   "test",
-				val:   0.555,
-				exp:   1 * time.Second,
-			},
-		}
-	)
+	testCases := []struct {
+		title string
+		val   float32
+		key   string
+		exp   time.Duration
+	}{
+		{
+			title: "Success",
+			key:   "test",
+			val:   0.555,
+			exp:   1 * time.Second,
+		},
+	}
 
 	for _, tc := range testCases {
 		s.Run(tc.title, func() {
@@ -55,28 +53,26 @@ func (s *CacheSuite) TestGet() {
 
 // TestGetWithLoader ensures setting and retrieval of the requested value using loader func
 func (s *CacheSuite) TestGetWithLoader() {
-	var (
-		testCases = []struct {
-			title    string
-			key      string
-			exp      time.Duration
-			loader   LoaderFunc[string, float32]
-			expected float32
-		}{
-			{
-				title: "Get value with loader func",
-				key:   "test",
-				exp:   1 * time.Second,
-				loader: func(s string) (float32, error) {
-					if s == "test" {
-						return 111.89, nil
-					}
-					return 0, ErrNotFound
-				},
-				expected: 111.89,
+	testCases := []struct {
+		title    string
+		key      string
+		exp      time.Duration
+		loader   LoaderFunc[string, float32]
+		expected float32
+	}{
+		{
+			title: "Get value with loader func",
+			key:   "test",
+			exp:   1 * time.Second,
+			loader: func(s string) (float32, error) {
+				if s == "test" {
+					return 111.89, nil
+				}
+				return 0, ErrNotFound
 			},
-		}
-	)
+			expected: 111.89,
+		},
+	}
 
 	for _, tc := range testCases {
 		s.Run(tc.title, func() {
