@@ -1,3 +1,9 @@
+// Package cache provides in-memory lru (discards the least recently used items first) cache functionality
+//
+//	Copyright 2025 TuneIn, Inc. All rights reserved.
+//
+// Use of this source code is governed by Apache License 2.0
+// license that can be found in the LICENSE file.
 package cache
 
 // This module provides a duplicate function call suppression
