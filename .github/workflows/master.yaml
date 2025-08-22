@@ -1,0 +1,43 @@
+name: master
+
+permissions:
+  id-token: write
+  contents: write
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    if: ${{ github.event.head_commit.message != 'Initial commit' }}
+    runs-on: ubuntu-small-latest
+    steps:
+      - name: run common step
+        uses: tunein/streaming-pipelines/common@v2.11.3
+        with:
+          ssh-secrets: |
+            ${{ secrets.DEPLOY_KEY_GO_COMMON }}
+      - name: run test step
+        uses: tunein/streaming-pipelines/test@v2.11.3
+        with:
+          run_tests_if_no_code_changes: 'true'
+
+  lint:
+    if: ${{ github.event.head_commit.message != 'Initial commit' }}
+    runs-on: ubuntu-small-latest
+    steps:
+      - name: run common step
+        uses: tunein/streaming-pipelines/common@v2.11.3
+        with:
+          ssh-secrets: |
+            ${{ secrets.DEPLOY_KEY_GO_COMMON }}
+      - name: run lint step
+        uses: tunein/streaming-pipelines/lint@v2.11.3
+        with:
+          run_lint_if_no_code_changes: 'true'
