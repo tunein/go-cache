@@ -1,12 +1,19 @@
 name: Go
-on: [push, pull_request]
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  build_and_test:
-    runs-on: ubuntu-small-latest
-
+  build-and-test:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
@@ -17,18 +24,29 @@ jobs:
         run: go build -v ./...
       - name: Test with the Go CLI
         run: go test -race
-  golangci:
+
+  golangci-lint:
     name: lint
-    runs-on: ubuntu-small-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.24'
           cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          # Require: The version of golangci-lint to use.
-          version: v2.4.0
+          version: v2.4
           args: --timeout=1m -v
+          problem-matchers: true
+
+  vulnerability-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.32.0
+        with:
+          scan-type: 'fs'
+          severity: 'MEDIUM,HIGH,CRITICAL'
