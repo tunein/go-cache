@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-small-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
@@ -26,7 +26,7 @@ jobs:
 
   golangci-lint:
     name: lint
-    runs-on: ubuntu-small-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
@@ -40,7 +40,7 @@ jobs:
           problem-matchers: true
 
   vulnerability-scan:
-    runs-on: ubuntu-small-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Run Trivy vulnerability scanner
